@@ -24,7 +24,7 @@ iptables -A INPUT -p tcp --tcp-flags RST RST -j DROP
 iptables -I INPUT -m geoip --src-cc KR -p tcp -m multiport --dports 1201,1202,1203,1204,1205,1206,1207,1208,1209,1210 -j ACCEPT
 ipset create blacklist hash:ip maxelem 4294967295;
 iptables -t raw -A PREROUTING -m set --match-set blacklist src -j DROP
-for port in {1201..1210}; do
+for port in 1201 1202 1203 1204 1205 1206 1207 1208 1209 1210; do
     iptables -t mangle -A PREROUTING -p tcp --dport $port -m connlimit --connlimit-above 4 -j SET --add-set blacklist src
     iptables -t mangle -A PREROUTING -p tcp --dport $port -m connlimit --connlimit-above 4 -j DROP
     iptables -t mangle -A PREROUTING -p tcp -m tcp --dport $port -m conntrack --ctstate NEW -m hashlimit --hashlimit-above 3/sec --hashlimit-burst 7 --hashlimit-mode srcip --hashlimit-name connection_flood --hashlimit-htable-expire 3 -j SET --add-set blacklist src
